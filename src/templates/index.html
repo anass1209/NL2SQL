@@ -1,0 +1,59 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Ask Your Database</h1>
+        <p>Enter your question in natural language, and I'll try to query the database.</p>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('ask') }}" method="post" class="query-form">
+            <textarea name="query" rows="4" placeholder="e.g., Show me all customers from Casablanca" required></textarea>
+            <button type="submit">Ask</button>
+        </form>
+
+         <!-- API Key Settings Button -->
+        <button id="settings-btn" title="Configure API Keys"><i class="fas fa-cog"></i></button>
+    </div>
+
+    <!-- API Key Modal (Hidden by default) -->
+    <div id="api-key-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">×</span>
+            <h2>Configure API Keys</h2>
+            <p>Please provide your Google API Key for the LLM.</p>
+            <form id="api-key-form">
+                <label for="gemini-api-key">Google API Key:</label>
+                <div class="api-key-input-wrapper">
+                    <input type="password" id="gemini-api-key" name="gemini_api_key" required>
+                    <button type="button" id="validate-key-btn">Validate</button>
+                </div>
+                 <p id="validation-status" class="validation-message"></p>
+                 <!-- <label for="tavily-api-key">Tavily API Key (Optional):</label> -->
+                 <!-- <input type="password" id="tavily-api-key" name="tavily_api_key"> -->
+                 <button type="submit">Save Keys</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Include your JS file -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

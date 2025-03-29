@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SQL query results from natural language processing">
+    <title>SQL Query Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container results-container">
+        <h1><i class="fas fa-database"></i> Query Results</h1>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">
+                        <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Original query section -->
+        <div class="result-section query-section">
+            <h2><i class="fas fa-question-circle"></i> Your Question</h2>
+            <div class="query-text">{{ result.user_query }}</div>
+            
+            {% if result.corrected_query and result.corrected_query != result.user_query %}
+            <div class="corrected-query">
+                <span class="correction-label"><i class="fas fa-spell-check"></i> Interpreted as:</span>
+                <span class="correction-text">{{ result.corrected_query }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Generated SQL section -->
+        {% if result.generated_sql %}
+        <div class="result-section sql-section">
+            <h2><i class="fas fa-code"></i> Generated SQL</h2>
+            <div class="sql-container">
+                <pre><code>{{ result.generated_sql }}</code></pre>
+                <button class="copy-btn" onclick="copyToClipboard('{{ result.generated_sql }}')">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Error section -->
+        {% if result.error %}
+        <div class="result-section error-section">
+            <h2><i class="fas fa-exclamation-triangle"></i> Error</h2>
+            <p>{{ result.error }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Database results section -->
+        {% if result.query_results is not none %}
+        <div class="result-section data-section">
+            <h2><i class="fas fa-table"></i> Database Results</h2>
+            
+            <div class="result-summary">
+                {% if result.query_results|length > 0 %}
+                    <span class="result-count">
+                        <i class="fas fa-list"></i> Found {{ result.query_results|length }} result{% if result.query_results|length != 1 %}s{% endif %}
+                    </span>
+                {% endif %}
+                
+                {% if result.query_results|length > 0 and result.column_names %}
+                    <div class="result-controls">
+                        <button id="download-csv" onclick="downloadCSV()">
+                            <i class="fas fa-download"></i> Export CSV
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+            
+            {% if result.query_results|length > 0 and result.column_names %}
+                <div class="table-container">
+                    <table id="results-table">
+                        <thead>
+                            <tr>
+                                {% for col_name in result.column_names %}
+                                    <th>{{ col_name }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in result.query_results %}
+                            <tr>
+                                {% for value in row %}
+                                    <td>{{ value if value is not none else "" }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% elif result.query_results|length == 0 %}
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    <p>The query executed successfully but returned no matching data.</p>
+                </div>
+            {% endif %}
+        </div>
+        {% elif not result.error %}
+         <div class="result-section data-section">
+             <h2><i class="fas fa-table"></i> Database Results</h2>
+             <div class="no-results">
+                <i class="fas fa-database"></i>
+                <p>No results to display. The query might not have been executed.</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Debug info section (if available) -->
+        {% if result.debug_info and result.debug_info|length > 0 %}
+        <div class="result-section debug-section collapsible">
+            <div class="collapsible-header" onclick="toggleSection(this)">
+                <h2><i class="fas fa-bug"></i> Debug Information</h2>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="collapsible-content" style="display: none;">
+                <pre><code>{{ result.debug_info|tojson(indent=2) }}</code></pre>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Navbar at bottom -->
+        <div class="actions-bar">
+            <a href="{{ url_for('index') }}" class="action-btn primary-action">
+                <i class="fas fa-search"></i> New Query
+            </a>
+            <button class="action-btn secondary-action" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript for functionality -->
+    <script>
+        // Copy SQL to clipboard function
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // Show feedback
+            const copyBtn = document.querySelector('.copy-btn');
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+            copyBtn.classList.add('copied');
+            
+            setTimeout(() => {
+                copyBtn.innerHTML = originalHTML;
+                copyBtn.classList.remove('copied');
+            }, 2000);
+        }
+        
+        // Toggle collapsible sections
+        function toggleSection(element) {
+            const content = element.nextElementSibling;
+            const icon = element.querySelector('.fa-chevron-down, .fa-chevron-up');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+                element.parentElement.classList.add('expanded');
+            } else {
+                content.style.display = 'none';
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+                element.parentElement.classList.remove('expanded');
+            }
+        }
+        
+        // Export table data to CSV
+        function downloadCSV() {
+            // Get table data
+            const table = document.getElementById('results-table');
+            let csv = [];
+            
+            // Header row
+            const headerRow = [];
+            const headers = table.querySelectorAll('thead th');
+            headers.forEach(header => {
+                headerRow.push('"' + header.textContent.replace(/"/g, '""') + '"');
+            });
+            csv.push(headerRow.join(','));
+            
+            // Data rows
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const rowData = [];
+                row.querySelectorAll('td').forEach(cell => {
+                    rowData.push('"' + cell.textContent.replace(/"/g, '""') + '"');
+                });
+                csv.push(rowData.join(','));
+            });
+            
+            // Create download link
+            const csvContent = csv.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'query_results.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Add fade-in animation to results
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.result-section');
+            sections.forEach((section, index) => {
+                setTimeout(() => {
+                    section.classList.add('fade-in');
+                }, 100 * index);
+            });
+        });
+    </script>
+
+    <!-- Additional styles for results page -->
+    <style>
+        .results-container {
+            max-width: 1000px;
+        }
+        
+        .query-text {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .corrected-query {
+            font-style: italic;
+            color: #666;
+            margin-top: 8px;
+        }
+        
+        .correction-label {
+            font-weight: 500;
+            margin-right: 5px;
+        }
+        
+        .sql-container {
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.7);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.9);
+        }
+        
+        .copy-btn.copied {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .result-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .result-count {
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .no-results i {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+        
+        .debug-section {
+            background-color: #f8f9fa;
+        }
+        
+        .collapsible-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .collapsible-header h2 {
+            margin: 0;
+        }
+        
+        .collapsible.expanded {
+            padding-bottom: 20px;
+        }
+        
+        .actions-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .action-btn {
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .primary-action {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .primary-action:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+        
+        .secondary-action {
+            background-color: #f8f9fa;
+            color: #444;
+            border: 1px solid #ddd;
+        }
+        
+        .secondary-action:hover {
+            background-color: #e9ecef;
+        }
+        
+        #download-csv {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        
+        #download-csv:hover {
+            background-color: #218838;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</body>
+</html>

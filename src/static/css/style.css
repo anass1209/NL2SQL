@@ -1,0 +1,405 @@
+/* style.css - Enhanced with modern UI elements */
+:root {
+    --primary-color: #4a6fa5;
+    --primary-hover: #3d5d8a;
+    --secondary-color: #5cb85c;
+    --secondary-hover: #4cae4c;
+    --light-bg: #f5f7fa;
+    --text-color: #333;
+    --border-color: #ddd;
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --border-radius: 6px;
+    --transition: all 0.3s ease;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: var(--light-bg);
+    color: var(--text-color);
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: #fff;
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    position: relative;
+  }
+  
+  h1, h2 {
+    color: var(--primary-color);
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 600;
+    font-size: 2.2em;
+    position: relative;
+  }
+  
+  h1::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: var(--primary-color);
+    margin: 8px auto 0;
+    border-radius: 2px;
+  }
+  
+  /* Query Form Styling */
+  .query-form textarea {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 100px;
+    transition: var(--transition);
+    font-size: 16px;
+  }
+  
+  .query-form textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+  }
+  
+  .query-form button {
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: var(--transition);
+  }
+  
+  .query-form button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+  }
+  
+  /* Results Page Styling */
+  .result-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+  
+  .result-section h2 {
+    margin-top: 0;
+    font-size: 1.3em;
+    color: var(--primary-color);
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .result-section pre {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+    border: 1px solid #e9ecef;
+  }
+  
+  .result-section code {
+    font-family: 'Courier New', Courier, monospace;
+    color: #d63384;
+  }
+  
+  .result-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .result-section th, 
+  .result-section td {
+    border: 1px solid var(--border-color);
+    padding: 12px 15px;
+    text-align: left;
+  }
+  
+  .result-section th {
+    background-color: #f2f7ff;
+    font-weight: 600;
+    color: var(--primary-color);
+  }
+  
+  .result-section tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .result-section tr:hover {
+    background-color: #f2f2f2;
+  }
+  
+  .error-section {
+    background-color: #fff8f8;
+    border-color: #fcc;
+    border-left: 4px solid #f66;
+  }
+  
+  .error-section p {
+    color: #d63031;
+    font-weight: 500;
+  }
+  
+  .back-link {
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  .back-link a {
+    text-decoration: none;
+    color: white;
+    background-color: var(--primary-color);
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    transition: var(--transition);
+    display: inline-block;
+  }
+  
+  .back-link a:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Flash Messages */
+  .flash-messages {
+    padding: 0;
+    margin-bottom: 25px;
+    list-style: none;
+  }
+  
+  .flash {
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+  }
+  
+  .flash.success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+  }
+  
+  .flash.error {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+  }
+  
+  .flash.warning {
+    color: #664d03;
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+  }
+  
+  .flash.info {
+    color: #055160;
+    background-color: #cff4fc;
+    border-color: #b6effb;
+  }
+  
+  /* Settings Button */
+  #settings-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.3em;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: var(--transition);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #settings-btn:hover {
+    background-color: rgba(74, 111, 165, 0.1);
+    transform: rotate(20deg);
+  }
+  
+  /* Modal Styling */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(3px);
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 30px;
+    border: 1px solid #e1e1e1;
+    width: 90%;
+    max-width: 500px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    position: relative;
+    animation: modalFadeIn 0.3s;
+  }
+  
+  @keyframes modalFadeIn {
+    from {opacity: 0; transform: translateY(-20px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+  
+  .close-btn {
+    color: #aaa;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .close-btn:hover {
+    color: var(--primary-color);
+  }
+  
+  #api-key-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+  }
+  
+  #api-key-form input[type="password"],
+  #api-key-form input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    transition: var(--transition);
+    font-size: 15px;
+  }
+  
+  #api-key-form input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+  }
+  
+  .api-key-input-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .api-key-input-wrapper input {
+    flex-grow: 1;
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
+  
+  .api-key-input-wrapper button {
+    padding: 12px 15px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: var(--transition);
+    font-weight: 500;
+  }
+  
+  .api-key-input-wrapper button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .validation-message {
+    margin-top: 5px;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+    min-height: 1.2em;
+    transition: var(--transition);
+  }
+  
+  .validation-message.valid {
+    color: #198754;
+  }
+  
+  .validation-message.invalid {
+    color: #dc3545;
+  }
+  
+  .validation-message.validating {
+    color: #fd7e14;
+  }
+  
+  #api-key-form button[type="submit"] {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    transition: var(--transition);
+  }
+  
+  #api-key-form button[type="submit"]:hover {
+    background-color: var(--primary-hover);
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .container {
+      padding: 20px;
+      margin: 15px;
+      width: auto;
+    }
+    
+    h1 {
+      font-size: 1.8em;
+    }
+    
+    .modal-content {
+      width: 95%;
+      margin: 20% auto;
+      padding: 20px;
+    }
+  }

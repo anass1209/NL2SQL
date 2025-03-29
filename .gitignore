@@ -1,0 +1,10 @@
+# Ignore the .env file in the src directory
+src/.env
+
+# Ignore the poetry.lock file at the root
+poetry.lock
+
+# Other common files to ignore
+*.log
+__pycache__/
+*.pyc

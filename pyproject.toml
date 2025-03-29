@@ -1,0 +1,24 @@
+[project]
+name = "seq2sql2seq"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Anass El Achham", email = "anas.elachham@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12.2,<4.0"
+dependencies = [
+    "flask>=3.1.0,<4.0",
+    "python-dotenv>=1.1.0,<2.0",
+    "psycopg2-binary>=2.9.10,<3.0",
+    "langchain>=0.3.21,<0.4",
+    "langchain-google-genai>=2.1.2,<3.0",
+    "langchain-core>=0.3.49,<0.4",
+]
+
+[tool.poetry]
+packages = [{include = "seq2sql2seq", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
