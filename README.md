@@ -28,9 +28,9 @@ Built with cutting-edge AI technology (Google Gemini Pro + LangChain), SQL Query
 <div style="text-align: center;">
   <img src="src/static/img/tables.png" alt="Main Interface" width="600"><br>
   <em>Tables in the database</em><br><br>
-    <img src="src/static/img/home.png" alt="Main Interface" width="600"><br>
+    <img src="src/static/img/Home.png" alt="Main Interface" width="600"><br>
   <em>Home page interface</em><br><br>
-  <img src="src/static/img/output.png" alt="Query Results" width="600"><br>
+  <img src="src/static/img/Output.png" alt="Query Results" width="600"><br>
   <em>Query results with SQL and data visualization</em>
 </div>
 
